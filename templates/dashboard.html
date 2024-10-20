@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<div class="mb-4">
+    <p>Your Affiliate Code: <strong>{{ current_user.affiliate_code }}</strong></p>
+    <p>Your Referral Link: <strong>{{ url_for('signup', affiliate_code=current_user.affiliate_code, _external=True) }}</strong></p>
+</div>
+
+<h3>Sponsored Ads</h3>
+<div class="list-group">
+    {% for ad in ads %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <h5>{{ ad.name }}</h5>
+            <p>{{ ad.url }}</p>
+        </div>
+        <a href="{{ url_for('visit_ad', ad_id=ad.id) }}" class="btn btn-info">Visit Ad</a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Optional: Form to add new ads (for admin) -->
+{% if current_user.username == 'sponsor' %}
+<h3 class="mt-4">Add New Ad</h3>
+<form method="POST" action="{{ url_for('add_ad') }}">
+    {{ add_ad_form.hidden_tag() }}
+    <div class="form-group">
+        {{ add_ad_form.name.label(class="form-label") }}
+        {{ add_ad_form.name(class="form-control", placeholder="Ad Name") }}
+        {% for error in add_ad_form.name.errors %}
+            <small class="form-text text-danger">{{ error }}</small>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ add_ad_form.url.label(class="form-label") }}
+        {{ add_ad_form.url(class="form-control", placeholder="Ad URL") }}
+        {% for error in add_ad_form.url.errors %}
+            <small class="form-text text-danger">{{ error }}</small>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-success">{{ add_ad_form.submit.label.text }}</button>
+</form>
+{% endif %}
+{% endblock %}
+

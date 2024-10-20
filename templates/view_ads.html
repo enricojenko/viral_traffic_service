@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}View Advertisement{% endblock %}
+
+{% block content %}
+<div class="ad-container w-100">
+    <h1 class="ad-header">Advertisement #{{ ad_number }}</h1>
+    <div class="text-center">
+        <p class="mb-4">Visit this link:</p>
+        <a href="{{ ad.url }}" target="_blank" class="btn btn-primary btn-lg mb-3">Open Ad</a>
+    </div>
+    <form method="POST">
+        <button type="submit" class="btn btn-success view-next-button">View Next Ad</button>
+    </form>
+</div>
+
+<!-- Display flashed messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alert-container mt-3 w-100">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+{% endblock %}
+

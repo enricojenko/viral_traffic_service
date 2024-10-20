@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Admin Settings</h1>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="num_ads_to_show">Number of Ads to Show:</label>
+            <input type="number" class="form-control" id="num_ads_to_show" name="num_ads_to_show" value="{{ num_ads_to_show }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Settings</button>
+    </form>
+</div>
+{% endblock %}
+

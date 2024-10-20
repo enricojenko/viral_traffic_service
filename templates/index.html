@@ -1,0 +1,12 @@
+{% if logged_in %}
+  <h1>Welcome back, {{ user.email }}!</h1>
+  <p>You are logged in. Here’s what you can do:</p>
+  <ul>
+    <li><a href="{{ url_for('view_ads', ad_id=1) }}">View Ads</a></li>
+    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+  </ul>
+{% else %}
+  <h1>Welcome to the Viral Traffic Service</h1>
+  <p>Please <a href="{{ url_for('login') }}">login</a> or <a href="{{ url_for('signup') }}">sign up</a> to get started!</p>
+{% endif %}
+

@@ -1,0 +1,10 @@
+<h1>{{ user.email }}'s Landing Page</h1>
+<p>Here's your unique referral link: {{ user.referral_link }}</p>
+
+<h2>Advertisements</h2>
+<ul>
+    {% for ad in ads %}
+        <li><a href="{{ ad.url }}" target="_blank">Ad #{{ loop.index }}: {{ ad.url }}</a></li>
+    {% endfor %}
+</ul>
+

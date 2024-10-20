@@ -1,0 +1,13 @@
+Flask
+Flask-Login
+Flask-WTF
+Flask-Migrate
+Flask-Bcrypt
+Flask-SQLAlchemy
+Werkzeug==3.0.4
+blinker==1.8.2
+click==8.1.7
+itsdangerous==2.2.0
+Jinja2==3.1.4
+MarkupSafe==3.0.1
+
