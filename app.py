@@ -46,7 +46,6 @@ def index():
         # Show content for logged-out users
         return render_template('index.html', logged_in=False)
 
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -60,7 +59,7 @@ def signup():
             flash("Invalid input, please try again.", "danger")
             return render_template('signup.html'), 400
 
-        logging.debug(f"Checking if email {email} is already in use")
+        logging.debug(f"Signup attempt for email: {email}")
 
         # Check if the email is already registered
         existing_user = User.query.filter_by(email=email).first()
@@ -70,26 +69,39 @@ def signup():
             return render_template('signup.html'), 400
 
         # Capture sponsor referral ID from URL (if any)
-        sponsor_id = request.args.get('referral_id')
+        sponsor_id = request.args.get('ref')
         sponsor = None
 
         if sponsor_id:
+            logging.debug(f"Referral link provided with sponsor ID: {sponsor_id}")
             sponsor = User.query.filter_by(id=sponsor_id).first()
             if sponsor:
-                logging.debug(f"User {email} signed up with sponsor {sponsor.email} (ID: {sponsor.id})")
+                logging.debug(f"Sponsor found for {email}: {sponsor.email} (ID: {sponsor.id})")
             else:
                 logging.warning(f"Invalid sponsor referral ID: {sponsor_id} for user {email}")
+        else:
+            logging.debug(f"No sponsor ID found for user {email}")
 
         # Hash the password and create the new user
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = User(email=email, password=hashed_password, promoted_link=promoted_link)
 
+        # Assign the sponsor ID (if found) to the new user
+        if sponsor:
+            logging.debug(f"Assigning sponsor ID {sponsor.id} to user {email}")
+            new_user.sponsor_id = sponsor.id
+        else:
+            logging.debug(f"No sponsor assigned for user {email}")
+
         try:
             db.session.add(new_user)
             db.session.commit()
 
+            # Verify if the sponsor_id was properly assigned and saved
+            logging.debug(f"User {new_user.email} created with sponsor_id: {new_user.sponsor_id}")
+
             # Generate the referral link for the new user
-            referral_link = url_for('signup', _external=True) + f"?referral_id={new_user.id}"
+            referral_link = url_for('signup', _external=True) + f"?ref={new_user.id}"
             new_user.referral_link = referral_link
             db.session.commit()
 
@@ -100,10 +112,11 @@ def signup():
                 new_ad = Ad(url=promoted_link)
                 db.session.add(new_ad)
                 db.session.commit()
+                logging.debug(f"Promoted link added to ads table for user {new_user.email}: {promoted_link}")
 
             # Log the user in after successful signup
             login_user(new_user)
-            logging.debug(f"New user created and logged in: {new_user.email}")
+            logging.debug(f"User {new_user.email} logged in after signup")
             flash("Signup successful! Check your email for your referral link.", "success")
 
             # Redirect to view the first ad
@@ -114,6 +127,10 @@ def signup():
             db.session.rollback()
             flash("Signup failed, please try again.", "danger")
             return render_template('signup.html'), 400
+
+    # Log the referral link of the signup page being viewed
+    referral_link = request.args.get('ref', None)
+    logging.debug(f"Viewing signup page with referral link: {referral_link}")
 
     # Render the signup page
     return render_template('signup.html')
