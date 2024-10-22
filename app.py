@@ -293,6 +293,23 @@ def admin():
 
     return render_template('admin_settings.html', num_ads_to_show=num_ads_to_show)
 
+
+@app.route('/downline/<int:sponsor_id>')
+def view_downline(sponsor_id):
+    # Fetch the sponsor user
+    sponsor = User.query.get(sponsor_id)
+    if not sponsor:
+        flash("Sponsor not found.", "danger")
+        return redirect(url_for('index'))
+
+    # Query all users who were referred by this sponsor
+    downline = User.query.filter_by(sponsor_id=sponsor.id).all()
+
+    # Log the downline for debugging purposes
+    logging.debug(f"Downline for sponsor {sponsor.email}: {[user.email for user in downline]}")
+
+    return render_template('downline.html', sponsor=sponsor, downline=downline)
+
 @app.route('/')
 
 @app.route('/logout')
