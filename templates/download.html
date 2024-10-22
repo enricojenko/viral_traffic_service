@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ sponsor.email }}'s Downline</title>
+</head>
+<body>
+    <h1>{{ sponsor.email }}'s Downline</h1>
+
+    {% if downline %}
+        <ul>
+            {% for user in downline %}
+                <li>{{ user.email }} (Referral Link: {{ user.referral_link }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No downline members found.</p>
+    {% endif %}
+</body>
+</html>
