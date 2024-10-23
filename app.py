@@ -296,19 +296,26 @@ def admin():
 
 @app.route('/downline/<int:sponsor_id>')
 def view_downline(sponsor_id):
-    # Fetch the sponsor user
+    # Fetch the sponsor (the user whose downline we're viewing)
     sponsor = User.query.get(sponsor_id)
+    
     if not sponsor:
-        flash("Sponsor not found.", "danger")
+        flash("Sponsor not found!", "danger")
         return redirect(url_for('index'))
+    
+    # Level 1: Direct Referrals
+    level_1 = User.query.filter_by(sponsor_id=sponsor.id).all()
 
-    # Query all users who were referred by this sponsor
-    downline = User.query.filter_by(sponsor_id=sponsor.id).all()
+    # Level 2: Referrals of Level 1 users
+    level_2 = User.query.filter(User.sponsor_id.in_([user.id for user in level_1])).all()
 
-    # Log the downline for debugging purposes
-    logging.debug(f"Downline for sponsor {sponsor.email}: {[user.email for user in downline]}")
+    # Level 3: Referrals of Level 2 users
+    level_3 = User.query.filter(User.sponsor_id.in_([user.id for user in level_2])).all()
 
-    return render_template('downline.html', sponsor=sponsor, downline=downline)
+    # Log downline details for debugging
+    logging.debug(f"Downline for sponsor {sponsor.email}: Level 1 ({len(level_1)}), Level 2 ({len(level_2)}), Level 3 ({len(level_3)})")
+
+    return render_template('downline.html', sponsor=sponsor, level_1=level_1, level_2=level_2, level_3=level_3)
 
 @app.route('/')
 

@@ -1,0 +1,28 @@
+<h1>Downline of {{ sponsor.email }}</h1>
+
+<h2>Level 1 - Direct Referrals</h2>
+<ul>
+    {% for user in level_1 %}
+        <li>{{ user.email }} (ID: {{ user.id }})</li>
+    {% else %}
+        <li>No direct referrals</li>
+    {% endfor %}
+</ul>
+
+<h2>Level 2 - Referrals of Level 1</h2>
+<ul>
+    {% for user in level_2 %}
+        <li>{{ user.email }} (ID: {{ user.id }})</li>
+    {% else %}
+        <li>No Level 2 referrals</li>
+    {% endfor %}
+</ul>
+
+<h2>Level 3 - Referrals of Level 2</h2>
+<ul>
+    {% for user in level_3 %}
+        <li>{{ user.email }} (ID: {{ user.id }})</li>
+    {% else %}
+        <li>No Level 3 referrals</li>
+    {% endfor %}
+</ul>
